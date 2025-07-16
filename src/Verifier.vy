@@ -112,8 +112,8 @@ def verify(
     (X1_x, X1_y) = self._ec_add(temp_x, temp_y, temp3_x, temp3_y)
 
     # negA1 for -A1 term
-    negA1_y: uint256 = P - A1.y
     # No % P needed since A1.y < P assumed (valid point)
+    negA1_y: uint256 = P - A1.y
 
     # Prepare pairing input (4 pairs, 192 bytes each, total 768 bytes)
     payload: Bytes[768] = concat(
@@ -135,6 +135,8 @@ def verify(
     )
 
     out: Bytes[32] = raw_call(_PAIRING, payload, max_outsize=32, is_static_call=True)
+    out_printable: uint256 = convert(out, uint256)
+
     return convert(out, uint256) == 1
 
 @internal
