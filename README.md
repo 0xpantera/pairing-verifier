@@ -3,18 +3,18 @@
 A Vyper smart contract for verifying a simplified bilinear pairing equation on the BN254 elliptic curve using Ethereum precompiles. This implements a basic zk-SNARK-like verification setup for educational purposes, based on the equation:
 
 
-$ 0 = -A_1 B_2 + \alpha_1 \beta_2 + X_1 \gamma_2 + C_1 \delta_2 $
+$`0 = -A_1 B_2 + \alpha_1 \beta_2 + X_1 \gamma_2 + C_1 \delta_2`$
 
-where $ X_1 = x_1 G_1 + x_2 G_1 + x_3 G_1 $, and points are in groups $\mathbb{G}_1$ or $\mathbb{G}_2$.
+where $`X_1 = x_1 G_1 + x_2 G_1 + x_3 G_1`$, and points are in groups $`\mathbb{G}_1`$ or $`\mathbb{G}_2`$.
 
-The contract computes $ X_1 $ on-chain, negates the pairing term for $ -A_1 B_2 $, and checks if the product of pairings equals 1 in the target group $\mathbb{G}_T$.
+The contract computes $`X_1`$ on-chain, negates the pairing term for $`-A_1 B_2`$, and checks if the product of pairings equals 1 in the target group $`\mathbb{G}_T`$.
 
 ## Features
 
 - Uses Ethereum precompiles for elliptic curve addition (0x06), scalar multiplication (0x07), and multi-pairing (0x08).
-- Hardcoded verification key points ($\alpha_1, \beta_2, \gamma_2, \delta_2$) for efficiency.
-- Dynamic inputs: Proof elements $ A_1 $ (G1), $ B_2 $ (G2), $ C_1 $ (G1), and public scalars $ x_1, x_2, x_3 $.
-- Balanced with nontrivial scalars (e.g., $ x_1=2, x_2=3, x_3=-4 \mod r $) for testing.
+- Hardcoded verification key points ($`\alpha_1, \beta_2, \gamma_2, \delta_2`$) for efficiency.
+- Dynamic inputs: Proof elements $`A_1`$ (G1), $`B_2`$ (G2), $`C_1`$ (G1), and public scalars $`x_1, x_2, x_3`$.
+- Balanced with nontrivial scalars (e.g., $`x_1=2, x_2=3, x_3=-4 \mod r`$) for testing.
 
 ## Mathematical Background
 
@@ -22,14 +22,14 @@ This project demonstrates key mathematical concepts from  cryptography, particul
 
 ### Bilinear Pairings Basics
 
-Bilinear pairings are functions $ e: \mathbb{G}_1 \times \mathbb{G}_2 \to \mathbb{G}_T $ on elliptic curve groups with properties like bilinearity ($ e(aP, bQ) = e(P, Q)^{ab} $) and non-degeneracy. On BN254 (used here), $\mathbb{G}_1$ and $\mathbb{G}_2$ are additive groups over finite fields, and $\mathbb{G}_T$ is multiplicative.
-The equation "0 = -A1 B2 + α1 β2 + X1 γ2 + C1 δ2" represents a scalar equation in the discrete log of $\mathbb{G}_T$: the product $ e(-A_1, B_2) \cdot e(\alpha_1, \beta_2) \cdot e(X_1, \gamma_2) \cdot e(C_1, \delta_2) = 1 $ in $\mathbb{G}_T$. This checks if the exponents sum to zero modulo the curve order.
+Bilinear pairings are functions $`e: \mathbb{G}_1 \times \mathbb{G}_2 \to \mathbb{G}_T`$ on elliptic curve groups with properties like bilinearity ($`e(aP, bQ) = e(P, Q)^{ab}`$) and non-degeneracy. On BN254 (used here), $`\mathbb{G}_1`$ and $`\mathbb{G}_2`$ are additive groups over finite fields, and $`\mathbb{G}_T`$ is multiplicative.
+The equation "0 = -A1 B2 + α1 β2 + X1 γ2 + C1 δ2" represents a scalar equation in the discrete log of $`\mathbb{G}_T`$: the product $`e(-A_1, B_2) \cdot e(\alpha_1, \beta_2) \cdot e(X_1, \gamma_2) \cdot e(C_1, \delta_2) = 1`$ in $`\mathbb{G}_T`$. This checks if the exponents sum to zero modulo the curve order.
 
 - Why pairings? They allow "multiplication" of group elements from different groups, enabling succinct proofs for arithmetic circuits.
 
 ### Why Hardcoded vs. Dynamic Values?
 
-- Hardcoded points ($\alpha_1, \beta_2, \gamma_2, \delta_2$): These are fixed for a specific circuit (computation being proved). In ZK, they're part of the verification key (VK) from a trusted setup. Precomputing offchain (e.g., via py_ecc) and hardcoding saves gas; on-chain computation would be expensive.
+- Hardcoded points ($`\alpha_1, \beta_2, \gamma_2, \delta_2`$): These are fixed for a specific circuit (computation being proved). In ZK, they're part of the verification key (VK) from a trusted setup. Precomputing offchain (e.g., via py_ecc) and hardcoding saves gas; on-chain computation would be expensive.
 - Dynamic arguments (A1, B2, C1, x1, x2, x3): These vary per proof/call. A1, B2, C1 are prover-supplied proof elements. x1, x2, x3 are "public inputs" (visible data like transaction IDs).
 
 This separation mirrors real ZK verifiers: reusable for the same circuit, customizable per instance.
@@ -38,7 +38,7 @@ This separation mirrors real ZK verifiers: reusable for the same circuit, custom
 
 Groth16 is a popular zk-SNARK for proving knowledge of witnesses satisfying arithmetic circuits (e.g., in Tornado Cash for privacy). The verifier equation is:
 
-$ e(A, B) = e(\alpha, \beta) \cdot e(D, \gamma) \cdot e(C, \delta) $
+$`e(A, B) = e(\alpha, \beta) \cdot e(D, \gamma) \cdot e(C, \delta)`$
 
 where:
 - Proof elements (dynamic): A (G1, like A1), B (G2, like B2), C (G1, like C1). Provided by the prover.
